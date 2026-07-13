@@ -19,14 +19,6 @@ EOT
     file_name                = optional(string)
     metadata                 = optional(string)
   }))
-  validation {
-    condition = alltrue([
-      for k, v in var.logic_app_integration_account_schemas : (
-        length(v.content) > 0
-      )
-    ])
-    error_message = "must not be empty"
-  }
   # --- Unconfirmed validation candidates, derived from azurerm_logic_app_integration_account_schema's provider source ---
   # Not auto-enabled: either a bespoke provider validator we can't safely translate,
   # or a path that crosses a list-typed block (needs its own for_each wrapping).
@@ -55,6 +47,9 @@ EOT
   #   source:    [from resourcegroups.ValidateName] !matched
   # path: integration_account_name
   #   source:    validate.IntegrationAccountName: no recognizable `if ... { errors = append(...) }` pattern - read it by hand
+  # path: content
+  #   condition: length(value) > 0
+  #   message:   must not be empty
   # path: file_name
   #   source:    [from validate.IntegrationAccountSchemaFileName] !ok
   # path: file_name
